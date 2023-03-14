@@ -8,80 +8,60 @@ import { fizzBuzz } from "./fizzbuzz"
 
 describe("FizzBuzz", () => {
     describe("Fizz", () => {
-        test("Given number is 3, return 'Fizz'", () => {
+        test.each([
+            {input: 3},
+            {input: 6},
+            {input: 669}
+        ])("Number $input must return 'Fizz'", ({input}) => {
             const expected = "Fizz"
-            const sut = fizzBuzz
+            const sut = fizzBuzz()
 
-            const actual = sut.execute(3)
-
-            expect(actual).toBe(expected)
-        })
-
-        test("Given number is 669, return 'Fizz'", () => {
-            const expected = "Fizz"
-            const sut = fizzBuzz
-
-            const actual = sut.execute(669)
+            const actual = sut.execute(input)
 
             expect(actual).toBe(expected)
         })
     })
 
     describe("Buzz", () => {
-        test("Given number is 5, return Buzz", () => {
+        test.each([
+            {input: 5},
+            {input: 55},
+            {input: 1040}
+        ])("Number $input must return Buzz", ({input}) => {
             const expected = "Buzz"
-            const sut = fizzBuzz
+            const sut = fizzBuzz()
 
-            const actual = sut.execute(5)
-
-            expect(actual).toBe(expected)
-        })
-        test("Given number is 1040, return Buzz", () => {
-            const expected = "Buzz"
-            const sut = fizzBuzz
-
-            const actual = sut.execute(1040)
+            const actual = sut.execute(input)
 
             expect(actual).toBe(expected)
         })
     })
     describe("FizzBuzz", () => {
-        test("Given number is 15, return FizzBuzz", () => {
+        test.each([
+            {input: 15},
+            {input: 45},
+            {input: 1050}
+        ])("Number $input must return FizzBuzz", ({input}) => {
             const expected = "FizzBuzz"
-            const sut = fizzBuzz
+            const sut = fizzBuzz()
 
-            const actual = sut.execute(15)
-
-            expect(actual).toBe(expected)
-        })
-        test("Given number is 60, return FizzBuzz", () => {
-            const expected = "FizzBuzz"
-            const sut = fizzBuzz
-
-            const actual = sut.execute(60)
+            const actual = sut.execute(input)
 
             expect(actual).toBe(expected)
         })
     })
 
     describe("Number", () => {
-        test("Given number is 7, should return '7'", () => {
-            const expected = "7"
-            const sut = fizzBuzz
+        test.each([
+            {input: 7, expected: "7"},
+            {input: 49, expected: "49"},
+            {input: 79, expected: "79"}
+        ])("Number $input must return '$expected'", ({input, expected}) => {
+            const sut = fizzBuzz()
 
-            const actual = sut.execute(7)
-
-            expect(actual).toBe(expected)
-
-        })
-        test("Given number is 49, should return '49'", () => {
-            const expected = "49"
-            const sut = fizzBuzz
-
-            const actual = sut.execute(49)
+            const actual = sut.execute(input)
 
             expect(actual).toBe(expected)
-
         })
     })
 })
