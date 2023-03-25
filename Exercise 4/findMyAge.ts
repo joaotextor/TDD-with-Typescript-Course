@@ -8,13 +8,11 @@ type age = number
 export function findMyAge(props: IFindMyAge): age {
     const birthDate = props.birthDate
     const targetDate = props.targetDate
-    const years = targetDate.getFullYear() - birthDate.getFullYear()
-    let age = years
+    const age = targetDate.getFullYear() - birthDate.getFullYear()
     if ((targetDate.getMonth() < birthDate.getMonth()) 
-        || (targetDate.getMonth() === birthDate.getMonth() 
-            && targetDate.getDate() < birthDate.getDate()
-        )) {
-        age = years - 1
+        || (targetDate.getMonth() === birthDate.getMonth() && targetDate.getDate() < birthDate.getDate())
+    ) {
+        return age - 1
     }
     return age
 }
