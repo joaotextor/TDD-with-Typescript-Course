@@ -63,6 +63,9 @@ describe("String Calculator", () => {
                 expect(actual).toStrictEqual(result)
             })
         })
+    })
+
+    describe("Sum function", () => {
         describe("Should sum the numbers", () => {
             test.each([
                 {numbers: "1,2,3,4,5, 1001", result: 15},
@@ -71,9 +74,9 @@ describe("String Calculator", () => {
                 {numbers: ":901:902:903:904:905", result: 4515},
             ])("Input: $numbers | Result: $result" ,({numbers, result}) => {
                 const sut = new StringCalculator()
-
+    
                 const actual = sut.sum(numbers)
-
+    
                 expect(actual).toBe(result)
             })
         })
@@ -82,9 +85,9 @@ describe("String Calculator", () => {
                 {numbers: ":-901:902:903:904:905", result: Error},
             ])("Input: $numbers | Result: $result" ,({numbers, result}) => {
                 const sut = new StringCalculator()
-
+    
                 const actual = () => sut.sum(numbers)
-
+    
                 expect(actual).toThrow(result)
             })
         })
