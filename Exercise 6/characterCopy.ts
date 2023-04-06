@@ -20,7 +20,6 @@ export class Copier {
     ) {}
 
     copy() {
-
         let char = this.source.readChar()
         while (char !== "\n") {
             this.destination.writeChar(char)

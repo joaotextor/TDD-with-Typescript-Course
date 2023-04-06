@@ -4,50 +4,34 @@
 // - mocks
 
 import { Copier, IDestination, ISource } from "./characterCopy"
-
 describe("charater-copy", () => {
     describe("copy", () => {
 
         describe("no character before new line", () => {
             test("", () => {
-                const stubReadChar = jest.fn()
-                stubReadChar.mockReturnValue("\n")
-                const source: ISource = {
-                    readChar: stubReadChar
-                }
-                const mockWriteChar = jest.fn()
-                const destination: IDestination = {
-                    writeChar: mockWriteChar
-                }
-                const sut = new Copier(source, destination)
+                const source = createSource([])
+                const destination = createDestination()
+                const sut = createCopier(source, destination)
     
                 sut.copy()
     
-                expect(mockWriteChar).toHaveBeenCalledTimes(0)
+                expect(destination.writeChar).toHaveBeenCalledTimes(0)
             })
         })
+
         describe("one character before new line", () => {
             test.each([
                 {char: "a"},
                 {char: "z"},
                 {char: "!"},
             ])("char: $char", ({char}) => {
-                const stubReadChar = jest.fn()
-                stubReadChar.mockReturnValue("\n")
-                stubReadChar.mockReturnValueOnce(char)
-                const source: ISource = {
-                    readChar: stubReadChar
-                }
-                const mockWriteChar = jest.fn()
-                const destination: IDestination = {
-                    writeChar: mockWriteChar
-                }
-                const sut = new Copier(source, destination)
+                const source = createSource([char])
+                const destination = createDestination()
+                const sut = createCopier(source, destination)
     
                 sut.copy()
     
-                expect(mockWriteChar).toHaveBeenCalledTimes(1)
-                expect(mockWriteChar).toHaveBeenCalledWith(char)
+                expect(destination.writeChar).toHaveBeenCalledWith(char)
             })
         })
         describe("two characters before new line", () => {
@@ -56,22 +40,13 @@ describe("charater-copy", () => {
                 {chars: ["z", "4"]},
                 {chars: ["!", "*"]},
             ])("chars: $chars", ({chars: chars}) => {
-                const stubReadChar = jest.fn()
-                stubReadChar.mockReturnValue("\n")
-                chars.map(c => stubReadChar.mockReturnValueOnce(c))
-                const source: ISource = {
-                    readChar: stubReadChar
-                }
-                const mockWriteChar = jest.fn()
-                const destination: IDestination = {
-                    writeChar: mockWriteChar
-                }
-                const sut = new Copier(source, destination)
+                const source = createSource(chars)
+                const destination = createDestination()
+                const sut = createCopier(source, destination)
     
                 sut.copy()
     
-                expect(mockWriteChar).toHaveBeenCalledTimes(chars.length)
-                chars.map(c => expect(mockWriteChar).toHaveBeenCalledWith(c))
+                chars.map(c => expect(destination.writeChar).toHaveBeenCalledWith(c))
             })
         })
         describe("multiple characters before new line", () => {
@@ -80,26 +55,48 @@ describe("charater-copy", () => {
                 {chars: ["b", "s", "@", "8"]},
                 {chars: ["c", "1", "^", "1", "%", "4", "^"]},
             ])("chars: $chars", ({chars: chars}) => {
-                const stubReadChar = jest.fn()
-                stubReadChar.mockReturnValue("\n")
-                chars.map(c => stubReadChar.mockReturnValueOnce(c))
-                const source: ISource = {
-                    readChar: stubReadChar
-                }
-                const mockWriteChar = jest.fn()
-                const destination: IDestination = {
-                    writeChar: mockWriteChar
-                }
-                const sut = new Copier(source, destination)
+                const source = createSource(chars)
+                const destination = createDestination()
+                const sut = createCopier(source, destination)
     
                 sut.copy()
     
-                expect(mockWriteChar).toHaveBeenCalledTimes(chars.length)
-                chars.map(c => expect(mockWriteChar).toBeCalledWith(c))
+                expect(destination.getWrittenChars()).toStrictEqual(chars)
             })
         })
-
-        //TODO: test order of characters
-        //TODO: chars after new line shout not be written
+        describe("characters after new line are not written", () => {
+            test.each([
+                {chars: ["a", "b", "b", "\n", "a", "b"], result: ["a", "b", "b"]},
+            ])("chars: $chars | result: $result", ({chars: chars, result: expected}) => {
+                const source = createSource(chars)
+                const destination = createDestination()
+                const sut = createCopier(source, destination)
+    
+                sut.copy()
+    
+                expect(destination.getWrittenChars()).toStrictEqual(expected)
+            })
+        })
     })
 })
+
+function createSource(chars: string[]): ISource {
+    const stubReadChar = jest.fn()
+    stubReadChar.mockReturnValue("\n")
+    chars.map(c => stubReadChar.mockReturnValueOnce(c))
+    return {
+        readChar: stubReadChar
+    }
+}
+
+function createDestination() {
+    const writtenChars: string[] = []
+    return {
+        writeChar: jest.fn((c) => writtenChars.push(c)),
+        getWrittenChars: () => writtenChars
+    }
+}
+
+function createCopier(source: ISource, destination: IDestination): Copier {
+    return new Copier(source, destination)
+}
