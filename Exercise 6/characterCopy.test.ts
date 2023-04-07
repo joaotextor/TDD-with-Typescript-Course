@@ -39,7 +39,7 @@ describe("charater-copy", () => {
                 {chars: ["a", "b"]},
                 {chars: ["z", "4"]},
                 {chars: ["!", "*"]},
-            ])("chars: $chars", ({chars: chars}) => {
+            ])("chars: $chars", ({chars}) => {
                 const source = createSource(chars)
                 const destination = createDestination()
                 const sut = createCopier(source, destination)
@@ -54,7 +54,7 @@ describe("charater-copy", () => {
                 {chars: ["a", "z", "!"]},
                 {chars: ["b", "s", "@", "8"]},
                 {chars: ["c", "1", "^", "1", "%", "4", "^"]},
-            ])("chars: $chars", ({chars: chars}) => {
+            ])("chars: $chars", ({chars}) => {
                 const source = createSource(chars)
                 const destination = createDestination()
                 const sut = createCopier(source, destination)
