@@ -5,20 +5,54 @@ import { IFileWriter } from "./fileWriter";
 describe("CustomerCsvFileWriter", () => {
     describe("one customer", () => {
         test.each([
-            {customer: new Customer("Joao Textor", "12314124"), expected: "Joao Textor, 12314124"},
-            {customer: new Customer("Philip Morris", "666"), expected: "Philip Morris, 666"},
+            {customer: createCustomer("Joao Textor", "12314124")},
+            {customer: createCustomer("Philip Morris", "666")},
     
-        ])("customer: $expected", ({customer, expected}) => {
-            const fileWriter: IFileWriter = {
-                writeLine: jest.fn(),
-            };
+        ])("customer: $expected", ({customer}) => {
+            const fileWriter = createFileWriter();
+            const fileName = "customers.csv";
     
-            const sut = new CustomerCsvFileWriter(fileWriter);
+            const sut = createCustomerCsvFileWriter(fileWriter);
     
-            sut.writeCustomers("customers.csv", [customer]);
+            sut.writeCustomers(fileName, [customer]);
     
             expect(fileWriter.writeLine).toHaveBeenCalledTimes(1);
-            expect(fileWriter.writeLine).toHaveBeenCalledWith("customers.csv", expected);
+            assertCustomerWasWrittenToFile(fileWriter, fileName, customer);
+        });
+    });
+    describe("multiple customers", () => {
+        test("should write all customers", () => {
+            const customers = [
+                createCustomer("Joao Textor", "12314124"),
+                createCustomer("Philip Morris", "666"),
+                createCustomer("John Smith", "85123")
+            ];
+            const fileWriter = createFileWriter();
+            const fileName = "customers.csv";
+    
+            const sut = createCustomerCsvFileWriter(fileWriter);
+    
+            sut.writeCustomers(fileName, customers);
+    
+            customers.map((customer) => assertCustomerWasWrittenToFile(fileWriter, fileName, customer));
         });
     });
 });
+
+function createFileWriter(): IFileWriter {
+    return {
+        writeLine: jest.fn()
+    };
+}
+
+function createCustomerCsvFileWriter(fileWriter: IFileWriter) {
+    return new  CustomerCsvFileWriter(fileWriter);
+}
+
+function createCustomer(name: string, contactNumber: string): Customer {
+    return new Customer(name, contactNumber);
+}
+
+function assertCustomerWasWrittenToFile(fileWriter: IFileWriter, fileName: string, customer: Customer) {
+    return expect(fileWriter.writeLine).toHaveBeenCalledWith(fileName, `${customer.name}, ${customer.contactNumber}`);
+}
